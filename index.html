@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -8,688 +8,9 @@
     <meta name="theme-color" content="#3498db" />
     <meta name="color-scheme" content="light dark" />
     <title>原神产球及附着一览表</title>
-    <link rel="stylesheet" href="./style.css">
-    <style>
-        :root {
-            --bg-color: #f5f7fa;
-            --text-color: #333;
-            --card-bg: white;
-            --border-color: #e1e8ed;
-            --hover-bg: #f1f7ff;
-            --shadow: rgba(0, 0, 0, 0.05);
-            --heading-color: #2c3e50;
-            --primary-color: #3498db;
-            --secondary-color: #e74c3c;
-            --table-stripe: #f9f9f9;
-            --button-bg: #2c3e50;
-            --info-bg: #f8f9fa;
-            --wind-info-bg: #fff3cd;
-        }
-
-        body.dark-mode {
-            --bg-color: #1a1a1a;
-            --text-color: #e0e0e0;
-            --card-bg: #2d2d2d;
-            --border-color: #404040;
-            --hover-bg: #3a3a3a;
-            --shadow: rgba(0, 0, 0, 0.3);
-            --heading-color: #e0e0e0;
-            --primary-color: #4dabf7;
-            --secondary-color: #ff6b6b;
-            --table-stripe: #252525;
-            --button-bg: #404040;
-            --info-bg: #2a2a2a;
-            --wind-info-bg: #3a3520;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        body {
-            font-family: "Microsoft YaHei", sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 20px;
-            transition: background-color 0.3s, color 0.3s;
-            scrollbar-gutter: stable;
-        }
-
-        .header-bar {
-            position: sticky;
-            top: 0;
-            z-index: 120;
-            background: var(--bg-color);
-            padding: 20px 20px 12px;
-            box-shadow: none;
-            transition: box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease, transform 0.5s ease, opacity 0.5s ease;
-            margin-bottom: 12px;
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .header-bar.slide-out {
-            transform: translateY(-110%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .header-bar.released {
-            position: static;
-            box-shadow: none;
-        }
-
-        .header-bar.scrolled {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .header-inner {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 12px;
-        }
-
-        h1 {
-            text-align: center;
-            margin: 0;
-            color: var(--heading-color);
-            font-size: 2.5rem;
-        }
-
-        .dark-mode-toggle {
-            padding: 10px 20px;
-            background-color: var(--button-bg);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 19px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* 更新日志弹窗样式 - 85%大小，支持淡入淡出，点击外部关闭 */
-        .overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(3px);
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.25s ease, visibility 0s linear 0.25s;
-        }
-
-        .overlay.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            transition: opacity 0.25s ease;
-        }
-
-        .overlay-content {
-            width: 85%;
-            max-height: 85vh;
-            background: var(--card-bg);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            opacity: 0;
-            transform: scale(0.98);
-            transition: opacity 0.25s ease, transform 0.25s ease;
-        }
-
-        /* 弹窗内容随遮罩一起淡入 */
-        .overlay.active .overlay-content {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .overlay-header {
-            position: sticky;
-            top: 0;
-            z-index: 1001;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            padding: 16px 20px;
-            background: var(--bg-color);
-            box-shadow: 0 2px 8px var(--shadow);
-        }
-
-        .overlay-header h2 {
-            grid-column: 2;
-            text-align: center;
-            margin: 0;
-            color: var(--heading-color);
-            font-size: 2rem;
-        }
-
-        .overlay-header .dark-mode-toggle {
-            grid-column: 3;
-            justify-self: end;
-        }
-
-        .overlay-body {
-            padding: 20px;
-            overflow: auto;
-        }
-
-        body.overlay-open {
-            overflow: hidden;
-        }
-
-        .dark-mode-toggle:hover {
-            background-color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .box {
-            flex: 1;
-            min-width: 300px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px var(--shadow);
-            border: 1px solid var(--border-color);
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        .box h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: center;
-            margin: 0 auto;
-            table-layout: fixed;
-        }
-
-        th,
-        td {
-            border: 1px solid var(--border-color);
-            padding: 12px 8px;
-            font-size: 17px;
-            width: 20%;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-            hyphens: auto;
-        }
-
-        th {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-        }
-
-        .tab-content th {
-            background-color: transparent;
-            color: var(--text-color);
-        }
-
-        tr:nth-child(even) {background-color: var(--table-stripe);}
-
-        tr:hover {background-color: var(--hover-bg);}
-
-        .filters-dock {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 12px;
-            background: var(--bg-color);
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 0 var(--shadow);
-            transition: box-shadow 0.35s ease, transform 0.35s ease, background-color 0.3s ease;
-        }
-
-        .filters-dock .action-left,
-        .filters-dock .action-right {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(-10px);
-            transition: opacity 0.5s ease, transform 0.5s ease, background-color 0.3s ease;
-        }
-
-        .filters-dock.show-actions .action-left,
-        .filters-dock.show-actions .action-right {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
-
-        .filters-dock.stuck {
-            box-shadow: 0 10px 24px var(--shadow);
-        }
-
-        .filters {
-            position: static;
-            background: transparent;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: none;
-            grid-column: 2;
-        }
-
-        .filters-dock .action-left {
-            grid-column: 1;
-            justify-self: start;
-        }
-
-        .filters-dock .action-right {
-            grid-column: 3;
-            justify-self: end;
-        }
-
-        .tabs,
-        .weapon-tabs {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .tabs,
-        .weapon-tabs {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .weapon-tabs {padding-top: 2px;}
-
-        .tab-button,
-        .weapon-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 14px;
-            background-color: var(--button-bg);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 19px;
-            transition: all 0.3s ease;
-        }
-
-        .filter-icon {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-            pointer-events: none;
-        }
-
-        .tab-button:hover,
-        .weapon-button:hover {background-color: var(--primary-color);}
-
-        .tab-button.active,
-        .weapon-button.active {background-color: var(--secondary-color);}
-
-        .content {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 12px var(--shadow);
-            border: 1px solid var(--border-color);
-            overflow-x: visible;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        .tab-content {display: none;}
-
-        .tab-content.active {display: block;}
-
-        .element-title {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-
-        /* 元素标题跟随对应弱色 */
-        #fire .element-title {color: #ff6b6b;}
-
-        #water .element-title {color: #4dabf7;}
-
-        #thunder .element-title {color: #b197fc;}
-
-        #ice .element-title {color: #a5f3fc;}
-
-        #wind .element-title {color: #a7f3d0;}
-
-        #rock .element-title {color: #fde047;}
-
-        #grass .element-title {color: #86efac;}
-
-        .character-table {margin-bottom: 30px;}
-
-        .character-table h3 {
-            text-align: center;
-            color: white;
-            background-color: var(--primary-color);
-            margin: 20px 0 0;
-            padding: 12px;
-            border-radius: 8px 8px 0 0;
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-
-        /* 角色表的可见标签行已移除，改为隐藏标签 */
-        .character-table table {margin-top: 0;}
-
-        .info-box {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: var(--info-bg);
-            border-radius: 8px;
-            font-size: 17px;
-            transition: background-color 0.3s;
-        }
-
-        .wind-info-box {
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: var(--wind-info-bg);
-            border-radius: 8px;
-            font-size: 17px;
-            transition: background-color 0.3s;
-        }
-
-        /* 元素量颜色样式 */
-        .element-fire-weak {
-            color: #ff6b6b;
-            font-weight: 600;
-        }
-
-        .element-fire-strong {
-            color: #ee0000;
-            font-weight: 600;
-        }
-
-        .element-fire-super {
-            color: #8b0000;
-            font-weight: 600;
-        }
-
-        .element-water-weak {
-            color: #4dabf7;
-            font-weight: 600;
-        }
-
-        .element-water-strong {
-            color: #0066cc;
-            font-weight: 600;
-        }
-
-        .element-water-super {
-            color: #003d7a;
-            font-weight: 600;
-        }
-
-        .element-thunder-weak {
-            color: #b197fc;
-            font-weight: 600;
-        }
-
-        .element-thunder-strong {
-            color: #7950f2;
-            font-weight: 600;
-        }
-
-        .element-thunder-super {
-            color: #4c1d95;
-            font-weight: 600;
-        }
-
-        .element-ice-weak {
-            color: #a5f3fc;
-            font-weight: 600;
-        }
-
-        .element-ice-strong {
-            color: #22d3ee;
-            font-weight: 600;
-        }
-
-        .element-ice-super {
-            color: #0891b2;
-            font-weight: 600;
-        }
-
-        .element-wind-weak {
-            color: #a7f3d0;
-            font-weight: 600;
-        }
-
-        .element-wind-strong {
-            color: #34d399;
-            font-weight: 600;
-        }
-
-        .element-wind-super {
-            color: #059669;
-            font-weight: 600;
-        }
-
-        .element-rock-weak {
-            color: #fde047;
-            font-weight: 600;
-        }
-
-        .element-rock-strong {
-            color: #eab308;
-            font-weight: 600;
-        }
-
-        .element-rock-super {
-            color: #a16207;
-            font-weight: 600;
-        }
-
-        .element-grass-weak {
-            color: #86efac;
-            font-weight: 600;
-        }
-
-        .element-grass-medium {
-            color: #4ade80;
-            font-weight: 600;
-        }
-
-        .element-grass-strong {
-            color: #16a34a;
-            font-weight: 600;
-        }
-
-        .element-grass-super {
-            color: #14532d;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            body {font-size: 17px;}
-
-            .tab-button {
-                padding: 8px 12px;
-                font-size: 13px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            /* 手机端标题栏两行布局 */
-            .header-bar {
-                padding: 12px 12px;
-            }
-            
-            .header-bar .header-inner {
-                display: grid;
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto;
-                gap: 10px;
-                align-items: center;
-            }
-            
-            .header-bar .header-inner h1 {
-                grid-row: 1;
-                grid-column: 1;
-                text-align: center;
-                margin: 0;
-            }
-            
-            /* 第2行：两个按钮并排显示 */
-            .header-bar .header-inner .dark-mode-toggle:first-child {
-                grid-row: 2;
-                grid-column: 1;
-                justify-self: start;
-            }
-            
-            .header-bar .header-inner .dark-mode-toggle:last-child {
-                grid-row: 2;
-                grid-column: 1;
-                justify-self: end;
-            }
-
-            /* 手机端过滤器-dock三行布局：元素 | 按钮 | 武器 */
-            .filters-dock {
-                display: grid;
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto;
-                gap: 8px;
-                padding: 10px 12px;
-                margin-bottom: 16px;
-            }
-
-            .filters-dock .action-left,
-            .filters-dock .action-right {
-                opacity: 1;
-                pointer-events: auto;
-                transform: translateY(0);
-            }
-            
-            /* 第1行：按钮（更新日志和深色模式）并排显示 */
-            .filters-dock .action-left {
-                grid-row: 1;
-                grid-column: 1;
-                justify-self: start;
-            }
-            
-            .filters-dock .action-right {
-                grid-row: 1;
-                grid-column: 1;
-                justify-self: end;
-            }
-            
-            /* 第2行：元素栏 */
-            .filters {
-                grid-row: 2;
-                display: contents;
-            }
-            
-            .tabs {
-                grid-row: 2;
-                grid-column: 1;
-            }
-            
-            /* 第3行：武器栏 */
-            .weapon-tabs {
-                grid-row: 3;
-                grid-column: 1;
-                padding-top: 0;
-            }
-
-            /* 标签栏在移动端换行显示，居中排布 */
-            .tabs,
-            .weapon-tabs {
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            
-            .weapon-button {padding: 6px 10px; font-size: 15px;}
-            .tab-button {padding: 6px 10px;}
-            .dark-mode-toggle {padding: 8px 12px; font-size: 16px;}
-            .content {padding: 20px;}
-            .box {padding: 16px;}
-            body {padding: 16px;}
-            th, td {padding: 10px 6px; font-size: 15.5px;}
-        }
-
-        /* 极小屏优化（≤480px），进一步压缩空间并提升可读性 */
-        @media (max-width: 480px) {
-            body {font-size: 16px; padding: 12px;}
-            h1 {font-size: clamp(1.3rem, 6vw, 1.7rem);}            
-            .element-title {font-size: clamp(1.1rem, 5.5vw, 1.5rem);}     
-            .header-bar {padding: 12px 12px 8px;}
-            .content {padding: 16px;}
-            .box {padding: 14px;}
-            th, td {padding: 8px 6px; font-size: 15px;}
-            .character-table h3 {font-size: 1rem; padding: 8px;}
-            
-            /* 超小屏下缩小图标 */
-            .tab-button, .weapon-button {
-                padding: 5px 8px;
-                font-size: 14px;
-            }
-            
-            .tab-button img, .weapon-button img {
-                width: 18px;
-                height: 18px;
-            }
-            
-            .dark-mode-toggle {
-                padding: 6px 10px;
-                font-size: 16px;
-            }
-        }
-    </style>
+   
+    <link href="style.css" rel="stylesheet">
 </head>
-
 <body>
     <header class="header-bar">
         <div class="header-inner">
@@ -718,7 +39,19 @@
             </div>
             <div class="overlay-body">
                 <div class="content">
-                    <h3 style="text-align:center;margin-bottom:20px;color:var(--primary-color);font-size:1.5rem;">
+                    <h3 style="text-align:center;margin:30px 0 20px;color:var(--primary-color);font-size:1.5rem;">
+                        V6.4.0 更新内容
+                    </h3>
+                    <div class="info-box">
+                        <ol style="margin:0;padding-left:24px;line-height:2;">
+                            <li>新增了角色的抗打断系数</li>
+                            <li>统一了格式和名称</li>
+                            <li>新增瓦蕾莎的产球比例</li>
+                            <li>更新了6.3角色的附着以及产球</li>
+                            <li>同步版本更新信息为：游戏版本.迭代版本</li>
+                        </ol>
+                    </div>
+                    <h3 style="text-align:center;margin:30px 0 20px;color:var(--primary-color);font-size:1.5rem;">
                         V1.0.1 更新内容
                     </h3>
                     <div class="info-box">
@@ -727,6 +60,7 @@
                             <li>独立更新日志从页面遮罩改为弹窗</li>
                             <li>新增了可以使用武器筛选角色</li>
                             <li>补充了闲云的产球</li>
+                            <li>更新了ui界面与手机端的视觉效果（暂时仍有已知bug）</li>
                             <tr># edge浏览器中开关“更新日志”异常时：外观>浏览器行为和功能>常规行为>关闭始终显示滚动条</tr>
                         </ol>
                     </div>
@@ -854,8 +188,10 @@
         <div class="tab-content active" id="fire">
             <h2 class="element-title">火系角色技能附着及产球表</h2>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>安柏</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -874,8 +210,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>班尼特</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -894,8 +232,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>迪卢克</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -911,8 +251,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>可莉</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -943,8 +285,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>香菱</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -963,8 +307,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>辛焱</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -980,8 +326,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>胡桃</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1006,8 +354,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>烟绯</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1029,8 +379,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>宵宫</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1055,8 +407,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>托马</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1072,8 +426,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>迪希雅</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1098,8 +454,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>林尼</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1121,8 +479,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>夏沃蕾</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1144,8 +504,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>嘉明</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1164,8 +526,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>阿蕾奇诺</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1196,8 +560,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>旅行者（火）</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1222,8 +588,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>玛薇卡</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1248,8 +616,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="火系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>杜林</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1269,8 +639,10 @@
         <div class="tab-content" id="water">
             <h2 class="element-title">水系角色技能附着及产球表</h2>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>芭芭拉</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1289,8 +661,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>莫娜</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1321,8 +695,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>行秋</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1338,8 +714,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>珊瑚宫心海</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1364,8 +742,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>神里绫人</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1387,8 +767,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>达达利亚</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1422,8 +804,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>夜兰</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1454,8 +838,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>坎蒂丝</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1477,8 +863,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>妮露</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1500,8 +888,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>那维莱特</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1532,8 +922,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>旅行者（水）</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1549,8 +941,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>芙宁娜</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1578,8 +972,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>希格雯</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1601,8 +997,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>玛拉妮</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1624,8 +1022,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>塔利雅</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1638,8 +1038,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>爱诺</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1661,8 +1063,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="水系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>哥伦比亚</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1688,8 +1092,10 @@
         <div class="tab-content" id="thunder">
             <h2 class="element-title">雷系角色技能附着及产球表</h2>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>丽莎</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1717,8 +1123,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>雷泽</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1743,8 +1151,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>菲谢尔</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1772,8 +1182,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>北斗</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1792,8 +1204,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>刻晴</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1815,8 +1229,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>旅行者（雷）</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1832,8 +1248,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>雷电将军</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1855,8 +1273,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>九条裟罗</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1878,8 +1298,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>八重神子</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1898,8 +1320,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>久岐忍</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1915,8 +1339,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>多莉</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1932,8 +1358,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>赛诺</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1961,8 +1389,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>赛索斯</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -1981,8 +1411,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>克洛琳德</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2004,8 +1436,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>欧洛伦</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2024,8 +1458,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>瓦雷莎</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2050,8 +1486,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>伊安珊</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2067,8 +1505,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>伊涅芙</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2084,8 +1524,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="雷系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>菲林斯</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2108,8 +1550,10 @@
         <div class="tab-content" id="ice">
             <h2 class="element-title">冰系角色技能附着及产球表</h2>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>凯亚</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2122,8 +1566,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>重云</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2145,8 +1591,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>七七</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2159,8 +1607,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>迪奥娜</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2179,8 +1629,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>甘雨</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2202,8 +1654,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>罗莎莉亚</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2216,8 +1670,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>优菈</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2242,8 +1698,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>神里绫华</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2271,8 +1729,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>埃洛伊</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2294,8 +1754,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>申鹤</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2314,8 +1776,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>莱依拉</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2331,8 +1795,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>米卡</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2348,8 +1814,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>菲米尼</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2368,8 +1836,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>莱欧斯利</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2391,8 +1861,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>夏洛蒂</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2426,8 +1898,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>茜特拉莉</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2455,8 +1929,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>爱可菲</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2475,8 +1951,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="冰系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>丝柯克</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2518,8 +1996,10 @@
                 <p>未特别说明的情况下染色顺序为：火水雷冰</p>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>旅行者（风）</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2544,8 +2024,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>温迪</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2570,8 +2052,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>砂糖</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2590,8 +2074,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>琴</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2607,8 +2093,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>魈</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2627,8 +2115,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>枫原万叶</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2653,8 +2143,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>早柚</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2673,8 +2165,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>鹿野院平藏</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2699,8 +2193,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>流浪者</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2728,8 +2224,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>珐露珊</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2748,8 +2246,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>琳妮特</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2771,8 +2271,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>闲云</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2794,8 +2296,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>恰斯卡</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2826,8 +2330,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>蓝砚</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2849,8 +2355,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>梦见月瑞希</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2872,8 +2380,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>伊法</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2895,8 +2405,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="风系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>雅柯达</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2931,8 +2443,10 @@
         <div class="tab-content" id="rock">
             <h2 class="element-title">岩系角色技能附着及产球表</h2>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>旅行者（岩）</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2954,8 +2468,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>凝光</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2977,8 +2493,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>诺艾尔</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -2997,8 +2515,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>钟离</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3020,8 +2540,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>阿贝多</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3040,8 +2562,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>荒泷一斗</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3057,8 +2581,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>五郎</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3083,8 +2609,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>云堇</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3103,8 +2631,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>娜维娅</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3129,8 +2659,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>千织</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3155,8 +2687,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>卡齐娜</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3175,8 +2709,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>希诺宁</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3198,8 +2734,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>兹白</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3215,8 +2753,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="岩系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>叶洛亚</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3236,8 +2776,10 @@
         <div class="tab-content" id="grass">
             <h2 class="element-title">草系角色技能附着及产球表</h2>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>旅行者（草）</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3253,8 +2795,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>提纳里</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3276,8 +2820,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="弓" style="display: none;"></span>
                 <h3>柯莱</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3299,8 +2845,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>纳西妲</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3325,8 +2873,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>艾尔海森</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3351,8 +2901,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>瑶瑶</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3374,8 +2926,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>白术</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3397,8 +2951,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>卡维</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3420,8 +2976,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="单手剑" style="display: none;"></span>
                 <h3>绮良良</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3446,8 +3004,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="长柄武器" style="display: none;"></span>
                 <h3>艾梅莉埃</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3469,8 +3029,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="双手剑" style="display: none;"></span>
                 <h3>基尼奇</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3486,8 +3048,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>菈乌玛</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3503,8 +3067,10 @@
                 </table>
             </div>
             <div class="character-table">
+                <span class="element" data-element="草系" style="display: none;"></span>
+                <span class="weapon" data-weapon="法器" style="display: none;"></span>
                 <h3>奈芙尔</h3>
-<table>
+                <table>
                     <tr>
                         <th>技能</th><th>元素量</th><th>附着规则</th><th>产球</th><th>备注</th><th>抗打断</th>
                     </tr>
@@ -3753,5 +3319,6 @@
         })();
     </script>
 </body>
-
+<script src="script.js"></script>
+</body>
 </html>
